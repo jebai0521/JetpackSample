@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "My Application"
 include ':1_startup'
+include ':2_activity'
+include ':3_uimode'
