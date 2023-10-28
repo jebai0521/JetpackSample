@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="my_light_primary">#FF0</color>
+    <color name="my_dark_primary">#0FF</color>
     <color name="textColor">#0F0</color>
 </resources>

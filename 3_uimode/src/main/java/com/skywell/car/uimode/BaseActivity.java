@@ -1,29 +1,30 @@
 package com.skywell.car.uimode;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+
+import com.skywell.car.uimode.skin.SkinManager;
 
 public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        Log.i(TAG, this.getClass().getSimpleName() + " onCreate");
-    }
+    protected UiModeManager mUiModeManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        SkinManager.getInstance().registerActivity(this);
         super.onCreate(savedInstanceState);
-        Log.i(TAG, this.getClass().getSimpleName() + " onCreate");
+        mUiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+//        getLayoutInflater().setFactory2(new SkyLayoutInflater());
+        Log.i(TAG, this.getClass().getSimpleName() + " onCreate11 [" + mUiModeManager + "]");
     }
 
     @Override
@@ -70,6 +71,13 @@ public class BaseActivity extends AppCompatActivity {
 
         Log.i(TAG, this.getClass().getSimpleName() + " onConfigurationChanged" + newConfig + ", " + newConfig.uiMode + ", " + uiMode);
 
+
+        int color  = getColor(R.color.textColor);
+        Log.i(TAG, "getColor " + color);
+
+        SkinManager.getInstance().onConfigurationChanged(this);
+
+
 //        recreate();
 //        getDelegate().setLocalNightMode(newConfig.uiMode);
 //        if (uiMode == Configuration.UI_MODE_NIGHT_NO) {
@@ -80,17 +88,17 @@ public class BaseActivity extends AppCompatActivity {
 //            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 //        }
 
-        if (uiMode == Configuration.UI_MODE_NIGHT_NO) {
-//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-        } else if (uiMode == Configuration.UI_MODE_NIGHT_YES) {
-//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-//            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
+//        if (uiMode == Configuration.UI_MODE_NIGHT_NO) {
+////            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//
+//        } else if (uiMode == Configuration.UI_MODE_NIGHT_YES) {
+////            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//        } else {
+////            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//        }
     }
 
     @Override
