@@ -33,7 +33,7 @@ public class AttrFactory {
 
 	/**
 	 * Check whether the attribute is supported
-	 * @param attrName
+	 * @param attrName 属性名称
 	 * @return true : supported <br>
 	 * 		   false: not supported
 	 */
@@ -47,9 +47,6 @@ public class AttrFactory {
 		if(LIST_SELECTOR.equals(attrName)){
 			return true;
 		}
-		if(DIVIDER.equals(attrName)){
-			return true;
-		}
-		return false;
+		return DIVIDER.equals(attrName);
 	}
 }

@@ -2,6 +2,7 @@ package com.skywell.car.uimode;
 
 import android.app.Application;
 
+import com.skywell.car.uimode.skin.SkinManager;
 import com.skywell.car.uimode.util.SkinCompatResources;
 
 /**
@@ -16,6 +17,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        SkinManager.getInstance().register(this);
         SkinCompatResources.init(this);
     }
 }

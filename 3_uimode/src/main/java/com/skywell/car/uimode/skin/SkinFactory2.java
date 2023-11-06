@@ -10,11 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatViewInflater;
 
 
 import com.skywell.car.uimode.skin.attr.AttrFactory;
 import com.skywell.car.uimode.skin.attr.AttrSkin;
-import com.skywell.car.uimode.util.SkinCompatThemeUtils;
+import com.skywell.car.uimode.skin.observer.SkinChangeObserver;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -30,15 +31,19 @@ import java.util.Map;
  * desc :
  * </pre>
  */
-public class SkinLayoutInflater implements LayoutInflater.Factory2 {
+public class SkinFactory2 implements LayoutInflater.Factory2 {
     private static final String TAG = "SkyLayoutInflater";
-
-    private WeakReference<AppCompatActivity> mAppCompatActivityWeakReference;
+    private WeakReference<Context> mContextWeakReference;
 
     private Map<View, SkinItem> mSkinMap = new HashMap<>();
 
-    public SkinLayoutInflater(AppCompatActivity appCompatActivity) {
-        mAppCompatActivityWeakReference = new WeakReference<>(appCompatActivity);
+    private List<SkinChangeObserver> mObservers = new ArrayList<>();
+
+
+    private AppCompatViewInflater mAppCompatViewInflater;
+
+    public SkinFactory2(Context context) {
+        mContextWeakReference = new WeakReference<>(context);
     }
 
     @Nullable
@@ -46,11 +51,29 @@ public class SkinLayoutInflater implements LayoutInflater.Factory2 {
     public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
         Log.i(TAG, "onCreateView " + name);
 
-        boolean isNeedSkin = attrs.getAttributeBooleanValue(SkinConfig.NAMESPACE, SkinConfig.ATTR_SKIN_ENABLE, false);
+        Context ctx = mContextWeakReference.get();
+        View view = null;
+        if (ctx == null) {
+            return view;
+        }
 
-        AppCompatDelegate delegate = mAppCompatActivityWeakReference.get().getDelegate();
-        View view = delegate.createView(parent, name, context, attrs);
-        if (view != null && isNeedSkin) {
+        if (ctx instanceof AppCompatActivity) {
+            AppCompatDelegate delegate = ((AppCompatActivity) ctx).getDelegate();
+            view = delegate.createView(parent, name, context, attrs);
+        } else  {
+            if (mAppCompatViewInflater == null) {
+                mAppCompatViewInflater = new AppCompatViewInflater();
+            }
+
+            boolean inheritContext = false;
+            return mAppCompatViewInflater.createView(parent, name, context, attrs, false,
+                    false,
+                    true,
+                    false
+            );
+        }
+
+        if (view != null) {
             collectSkinView(context, name, attrs, view);
         }
         return view;
@@ -80,21 +103,20 @@ public class SkinLayoutInflater implements LayoutInflater.Factory2 {
             }
         }
 
-//        if (par.size() == 0) {
-//            return;
-//        }
+        if (par.size() == 0) {
+            return;
+        }
         SkinItem item = new SkinItem(view, par);
         mSkinMap.put(view, item);
-        //如果已经是换肤模式了，更换图片
-//        Log.i("hked","SkinManger.getInstance().isExternalSkin() = "+SkinManger.getInstance().isExternalSkin());
-//        if(SkinManger.getInstance().isExternalSkin()){
-//            item.apply();
-//        }
+
+        if (view instanceof SkinChangeObserver) {
+            mObservers.add((SkinChangeObserver) view);
+        }
     }
 
     public void onUiModeChanged() {
         Log.i(TAG, "onUiModeChanged " + mSkinMap.size());
         mSkinMap.forEach((view, skinItem) -> skinItem.apply());
-//        mAppCompatActivityWeakReference.get().getWindow().setBackgroundDrawableResource();
+        mObservers.forEach(SkinChangeObserver::applySkin);
     }
 }

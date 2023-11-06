@@ -20,10 +20,9 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        SkinManager.getInstance().registerActivity(this);
+        SkinManager.getInstance().register(this);
         super.onCreate(savedInstanceState);
         mUiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-//        getLayoutInflater().setFactory2(new SkyLayoutInflater());
         Log.i(TAG, this.getClass().getSimpleName() + " onCreate11 [" + mUiModeManager + "]");
     }
 

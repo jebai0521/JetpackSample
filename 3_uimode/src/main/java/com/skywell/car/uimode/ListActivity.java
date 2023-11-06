@@ -1,10 +1,8 @@
 package com.skywell.car.uimode;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
-public class MainActivity extends BaseActivity {
+public class ListActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
